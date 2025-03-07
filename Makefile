@@ -4,6 +4,9 @@
 
 include $(TOPDIR)/rules.mk
 
+# Include LuCI specific Makefile for access to LuCI build system
+include $(TOPDIR)/feeds/luci/luci.mk
+
 LUCI_TITLE:=Network Monitor
 LUCI_DESCRIPTION:=Network Monitor for LuCI, netdata and vnstati2
 LUCI_DEPENDS:=+netdata +vnstati2
@@ -39,6 +42,8 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
+	$(INSTALL_DIR) $(1)/root
+	$(INSTALL_DIR) $(1)/www
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci
 	cp -pR ./root/* $(1)/
 	cp -pR ./luasrc/* $(1)/usr/lib/lua/luci/
@@ -51,6 +56,10 @@ define Package/$(PKG_NAME)/postinst
 	echo "Post Installation Script"
 	# Add cron job if it doesn't exist
 	(crontab -l | grep -q "/www/netmonitor/vnstati.sh" || (crontab -l; echo "*/5 * * * * /www/netmonitor/vnstati.sh >/dev/null 2>&1") | crontab -) && /etc/init.d/cron restart
+
+	# Enable netdata service if it's not already enabled
+	# /etc/init.d/netdata enable
+	# /etc/init.d/netdata restart
 }
 endef
 
@@ -58,6 +67,7 @@ define Package/$(PKG_NAME)/prerm
 #!/bin/sh
 [ -n "$${IPKG_INSTROOT}" ] || {
 	echo "Pre-removal Script"
+
 	# Stop and disable service if needed
 	# /etc/init.d/network-monitor stop
 	# /etc/init.d/network-monitor disable
