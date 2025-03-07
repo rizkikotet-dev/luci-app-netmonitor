@@ -1,0 +1,5 @@
+#!/bin/sh
+
+bash /www/netmonitor/vnstati.sh && (crontab -l | grep -q "/www/vnstati/vnstati.sh" || (crontab -l; echo "*/5 * * * * /www/netmonitor/vnstati.sh >/dev/null 2>&1") | crontab -) && /etc/init.d/cron restart
+
+exit 0

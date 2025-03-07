@@ -1,0 +1,12 @@
+<%+header%>
+<div class="cbi-map">
+  <iframe
+    id="netmonitor"
+    style="width: 100%; min-height: 750px; border: none; border-radius: 2px"
+  ></iframe>
+</div>
+<script type="text/javascript">
+  document.getElementById("netmonitor").src =
+    "http://" + window.location.hostname + "/netmonitor/index.html";
+</script>
+<%+footer%>
