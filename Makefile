@@ -41,6 +41,7 @@ endef
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci
 	cp -pR ./luasrc/* $(1)/usr/lib/lua/luci/
+	cp -pR ./htdocs/* $(1)/www/
 endef
 
 define Package/$(PKG_NAME)/postinst
