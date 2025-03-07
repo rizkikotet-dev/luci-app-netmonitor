@@ -48,6 +48,7 @@ endef
 define Package/$(PKG_NAME)/postinst
 #!/bin/sh
 [ -n "$${IPKG_INSTROOT}" ] || {
+	echo "Post Installation Script"
 	# Add cron job if it doesn't exist
 	(crontab -l | grep -q "/www/netmonitor/vnstati.sh" || (crontab -l; echo "*/5 * * * * /www/netmonitor/vnstati.sh >/dev/null 2>&1") | crontab -) && /etc/init.d/cron restart
 }
@@ -56,6 +57,7 @@ endef
 define Package/$(PKG_NAME)/prerm
 #!/bin/sh
 [ -n "$${IPKG_INSTROOT}" ] || {
+	echo "Pre-removal Script"
 	# Stop and disable service if needed
 	# /etc/init.d/network-monitor stop
 	# /etc/init.d/network-monitor disable
@@ -65,6 +67,7 @@ endef
 define Package/$(PKG_NAME)/postrm
 #!/bin/sh
 [ -n "$${IPKG_INSTROOT}" ] || {
+	echo "Post-removal Script"
 	# Remove cron job
 	crontab -l | grep -v "/www/netmonitor/vnstati.sh" | crontab - && /etc/init.d/cron restart
 }
