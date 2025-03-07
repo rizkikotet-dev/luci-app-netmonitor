@@ -1,0 +1,19 @@
+#!/bin/sh /etc/rc.common
+# (C) 2025 RizkiKotet
+
+START=99
+STOP=15
+
+start() {
+    /path/to/your/runner_script.sh --start
+}
+
+stop() {
+    /path/to/your/runner_script.sh --stop
+}
+
+restart() {
+    /path/to/your/runner_script.sh --stop
+    sleep 5
+    /path/to/your/runner_script.sh --start
+}
