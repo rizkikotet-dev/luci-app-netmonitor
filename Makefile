@@ -4,65 +4,58 @@
 
 include $(TOPDIR)/rules.mk
 
-# Include LuCI specific Makefile for access to LuCI build system
-include $(TOPDIR)/feeds/luci/luci.mk
-
-LUCI_TITLE:=Network Monitor
-LUCI_DESCRIPTION:=Network Monitor for LuCI, netdata and vnstati2
-LUCI_DEPENDS:=+netdata +vnstati2
 PKG_NAME:=luci-app-netmonitor
 PKG_VERSION:=1.0.0
-PKG_RELEASE:=08032025
+PKG_RELEASE:=1
 
 PKG_MAINTAINER:=rizkikotet <rizkidhc31@gmail.com>
 PKG_LICENSE:=Apache-2.0
 
-include $(INCLUDE_DIR)/package.mk
+LUCI_TITLE:=Network Monitor
+LUCI_DESCRIPTION:=Network Monitor for LuCI, netdata and vnstat
+LUCI_DEPENDS:=+luci-base +netdata +vnstati2
+PKG_ARCH:=all
 
-define Package/$(PKG_NAME)
-  SECTION:=luci
-  CATEGORY:=LuCI
-  SUBMENU:=3. Applications
-  TITLE:=Network Monitor for LuCI
-  DEPENDS:=$(LUCI_DEPENDS)
-  PKGARCH:=all
-endef
-
-define Package/$(PKG_NAME)/description
-  Network Monitor for LuCI, netdata and vnstati2.
-endef
+include $(TOPDIR)/feeds/luci/luci.mk
 
 define Package/$(PKG_NAME)/postinst
 #!/bin/sh
 [ -n "$${IPKG_INSTROOT}" ] || {
-	echo "Post Installation Script"
+	echo "Installing Network Monitor..."
 	# Add cron job if it doesn't exist
-	(crontab -l | grep -q "/www/netmonitor/vnstati.sh" || (crontab -l; echo "*/5 * * * * /www/netmonitor/vnstati.sh >/dev/null 2>&1") | crontab -) && /etc/init.d/cron restart
+	(crontab -l 2>/dev/null | grep -q "/www/netmonitor/vnstati.sh" || \
+		(crontab -l 2>/dev/null; echo "*/5 * * * * /www/netmonitor/vnstati.sh >/dev/null 2>&1") | crontab -) && \
+		/etc/init.d/cron restart
 
-	# Enable netdata service if it's not already enabled
-	# /etc/init.d/netdata enable
-	# /etc/init.d/netdata restart
+	# Create directory for images if it doesn't exist
+	mkdir -p /www/netmonitor
+	chmod 755 /www/netmonitor/vnstati.sh
+
+	# Restart services
+	/etc/init.d/netdata enable
+	/etc/init.d/netdata restart
+	
+	# Reload uci defaults
+	rm -f /tmp/luci-indexcache
+	exit 0
 }
 endef
 
 define Package/$(PKG_NAME)/prerm
 #!/bin/sh
 [ -n "$${IPKG_INSTROOT}" ] || {
-	echo "Pre-removal Script"
-
-	# Stop and disable service if needed
-	# /etc/init.d/network-monitor stop
-	# /etc/init.d/network-monitor disable
+	echo "Removing Network Monitor..."
+	# Remove cron job
+	crontab -l 2>/dev/null | grep -v "/www/netmonitor/vnstati.sh" | crontab -
+	/etc/init.d/cron restart
+	exit 0
 }
 endef
 
-define Package/$(PKG_NAME)/postrm
-#!/bin/sh
-[ -n "$${IPKG_INSTROOT}" ] || {
-	echo "Post-removal Script"
-	# Remove cron job
-	crontab -l | grep -v "/www/netmonitor/vnstati.sh" | crontab - && /etc/init.d/cron restart
-}
+include $(INCLUDE_DIR)/package.mk
+
+define Build/Compile
+	# No compilation needed
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
