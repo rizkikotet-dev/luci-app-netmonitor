@@ -32,24 +32,6 @@ define Package/$(PKG_NAME)/description
   Network Monitor for LuCI, netdata and vnstati2.
 endef
 
-define Build/Prepare
-endef
-
-define Build/Configure
-endef
-
-define Build/Compile
-endef
-
-define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/root
-	$(INSTALL_DIR) $(1)/www
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci
-	cp -pR ./root/* $(1)/
-	cp -pR ./luasrc/* $(1)/usr/lib/lua/luci/
-	cp -pR ./htdocs/* $(1)/www/
-endef
-
 define Package/$(PKG_NAME)/postinst
 #!/bin/sh
 [ -n "$${IPKG_INSTROOT}" ] || {
