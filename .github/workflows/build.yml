@@ -75,7 +75,7 @@ jobs:
     name: Release ${{ matrix.arch }}-${{ matrix.branch }}
     needs: get-version
     runs-on: ubuntu-latest
-    continue-on-error: true
+    continue-on-error: false
     strategy:
       fail-fast: false
       matrix:
