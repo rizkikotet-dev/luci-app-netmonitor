@@ -39,6 +39,7 @@ jobs:
           name: "v${{ steps.version.outputs.version }} Release"
           body: |
             ## 🚀 **Release v${{ steps.version.outputs.version }}** 🚀
+            ![Total_Download](https://img.shields.io/github/downloads/rizkikotet-dev/luci-app-netmonitor/v${{ steps.version.outputs.version }}/total?style=for-the-badge&labelColor=blue)
 
             Kami dengan bangga mempersembahkan **v${{ steps.version.outputs.version }}** dari **${{ env.PACKAGE_NAME }}**! Rilis ini membawa berbagai peningkatan, perbaikan bug, dan fitur baru yang akan membuat pengalaman Anda lebih baik. Terima kasih atas dukungan dan masukan Anda!
 

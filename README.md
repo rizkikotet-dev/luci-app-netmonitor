@@ -1,5 +1,9 @@
 # luci-app-netmonitor
 
+<p align="center">
+    <img src="https://img.shields.io/github/downloads/rizkikotet-dev/luci-app-netmonitor/total?style=for-the-badge&logo=openwrt&labelColor=blue" alt="GitHub Downloads (all assets, all releases)">
+</p>
+
 ## Pendahuluan
 
 Selamat datang di proyek **luci-app-netmonitor**! Aplikasi ini dirancang untuk membantu Anda memantau jaringan Anda dengan mudah. Ini menyediakan antarmuka yang ramah pengguna untuk melacak kinerja dan penggunaan jaringan Anda.
