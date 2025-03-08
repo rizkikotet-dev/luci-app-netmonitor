@@ -1,9 +1,28 @@
 #!/bin/sh
 
-# bash /www/netmonitor/vnstati.sh && (crontab -l | grep -q "/www/vnstati/vnstati.sh" || (crontab -l; echo "*/5 * * * * /www/netmonitor/vnstati.sh >/dev/null 2>&1") | crontab -) && /etc/init.d/cron restart
+# Create config file if it doesn't exist
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@netmonitor[-1]
+	add ucitrack netmonitor
+	set ucitrack.@netmonitor[-1].init=netmonitor
+	commit ucitrack
+EOF
 
-chmod +x /www/netmonitor/vnstati_script.sh
-chmod +x /usr/bin/netmonitor
-chmod +x /etc/init.d/netmonitor
+# Create initial config if it doesn't exist
+if [ ! -f /etc/config/netmonitor ]; then
+    cat > /etc/config/netmonitor <<-EOF
+config netmonitor 'general'
+	option enabled '1'
+	option interface 'br-lan'
+	option update_interval '300'
+EOF
+fi
+
+# Ensure permissions
+chmod 755 /etc/init.d/netmonitor
+chmod 755 /usr/bin/netmonitor
+
+# Enable service
+/etc/init.d/netmonitor enable
 
 exit 0
